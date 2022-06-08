@@ -1,6 +1,6 @@
 # transformato-helpers
 
-A variety of helper scripts/tools to use with transformato. Currently includes the following tools:
+A variety of helper scripts/tools to use with [transformato](https://github.com/JohannesKarwou/transformato). Currently includes the following tools:
 
 ## hmr_via_parmed
 
@@ -17,3 +17,7 @@ bash script that reads transformato analysis output files along with information
 ## trajectory_analysis
 
 python script that analyses the distances of specified restraints during transformato trajectories. Requires a restraint.yaml, but the system does not necessarily have been run with restraints.
+
+
+
+For usage, all scripts include a -h option to display help.
