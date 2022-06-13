@@ -4,7 +4,7 @@ A variety of helper scripts/tools to use with [transformato](https://github.com/
 
 ## hmr_via_parmed
 
-Python script that uses parmed to do manual hydrogren mass repartitioning. Use if you need to manually modify the output of CHARMM-GUI after solvation.
+Python script that uses parmed to do manual hydrogren mass repartitioning. Use if you need to manually modify the output of CHARMM-GUI after solvation. Takes parameter files from the /toppar/ folder situated in the parent directory of the intermediate states.
 
 ## makereplicates
 
@@ -14,7 +14,19 @@ Bash script that takes transformato replicate folders suffixed with -1/ and crea
 
 ## metaanalysis
 
-Bash script that reads transformato analysis output files along with information from the folder names and puts them in a handy .csv
+Bash script that reads transformato analysis output files along with information from the folder names and puts them in a handy .csv. Essentially a fancy wrapper for perl regex.
+
+Requires output to follow the following syntax:
+
+```
+analysis_[timescale]ns-k[kvalue][restraints]-[id].out
+```
+
+Example:
+
+```
+analysis_5ns-k10simple-1.out
+```
 
 ## trajectory_analysis
 
