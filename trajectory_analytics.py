@@ -18,10 +18,10 @@ logger=logging.getLogger(__name__)
 parser=argparse.ArgumentParser(description="Select which run you want to analyse. By default, visualizes distances as experienced by the restraints.")
 parser.add_argument("rundir",nargs="+",help="The run (replicate) directories containing the trajectories you want to analyze")
 parser.add_argument("--altrestraints",help="For systems without restraints, you may specify an alternative restraints.yaml")
-parser.add_argument("--csv",help="Write out a csv named <rundir>.csv")
+parser.add_argument("--csv",help="Write out a csv named <rundir>.csv",action="store_true")
 parser.add_argument("-s","--step",help="How many frames to skip between analytics runs",default=100,type=int)
-parser.add_argument("-nv","--novis",help="Suppress plot output",type=bool)
-parser.add_argument("-rd","--relative-distance",help="Display relative distance (r-r0) instead of absolute distance.")
+parser.add_argument("-nv","--novis",help="Suppress plot output",action="store_true")
+parser.add_argument("-rd","--relative-distance",help="Display relative distance (r-r0) instead of absolute distance.",action="store_true")
 
 args=parser.parse_args()
 
