@@ -9,6 +9,7 @@ import transformato.restraints as tfrs
 import numpy as np
 import matplotlib.pyplot as plt
 import re
+import pandas
 
 logging.basicConfig(level=logging.DEBUG,stream=sys.stdout)
 logger=logging.getLogger(__name__)
@@ -86,22 +87,26 @@ class ReplicateToAnalyze():
         
         subfigs=[]
         c=1
-        plt.figure(figsize=(9,9))
-        for intstate in sorted(self.intstates,key=lambda intstate:int(re.findall(r"\d+", intstate.name)[0])):
-            currentfig=plt.subplot(round(len(self.intstates)/2),2,c)
-            c+=1    
-            
-            [currentfig.plot(intstate.results["time"],intstate.results[f"b_{i}"]) for i in range(1,1+len(self.restraints_to_analyze))]
-            currentfig.set_title(intstate.name)
-            
-            subfigs.append(currentfig)
 
-        if args.csv:
-            
-            self.dump_into_csv()
+        if not args.novis: # only do if user hasnt requested suppression
+            plt.figure(figsize=(9,9))
+            for intstate in sorted(self.intstates,key=lambda intstate:int(re.findall(r"\d+", intstate.name)[0])):
+                currentfig=plt.subplot(round(len(self.intstates)/2),2,c)
+                c+=1    
+                
+                [currentfig.plot(intstate.results["time"],intstate.results[f"b_{i}"]) for i in range(1,1+len(self.restraints_to_analyze))]
+                currentfig.set_title(intstate.name)
+                
+                subfigs.append(currentfig)
 
-        plt.tight_layout()
-        plt.show()
+        if args.csv: # only do if user has requested csv dump
+            
+            self.dump_into_csv(f"{self.rundir.replace('/','')}.csv")
+
+        if not args.novis:
+            plt.tight_layout()
+            plt.show()
+
     def analyze_intstate(self,path_to_intstate,scale):
         
         self.universe=MDAnalysis.Universe(self.pdbpath,f"{path_to_intstate}/lig_in_complex.dcd")
@@ -141,6 +146,22 @@ class ReplicateToAnalyze():
         Args:
             csvname: The name of the csv to dump the data in
         """
+        logger.info(f"Dumping gathered data into csv: {csvname}")
+
+        results_dict={"time":self.intstates[-1].results["time"]}
+
+        for intstate in sorted(self.intstates,key=lambda intstate:int(re.findall(r"\d+", intstate.name)[0])):
+            
+            r_id=1
+            for restraint in self.restraints_to_analyze:
+                results_dict[f"{intstate.name}.bond_{r_id}"]=intstate.results[f"b_{r_id}"]
+                r_id+=1
+                
+        results_df=pandas.DataFrame(results_dict)
+        results_df.to_csv(csvname)
+
+        logger.info("csv write successfull")
+
     def get_distance(self,g1,g2):
         """
         Gets the distance between the centers of mass between two atom groups
@@ -165,3 +186,7 @@ if __name__=="__main__":
 
     for rundir in rundirs:
         all_runs.append(ReplicateToAnalyze(rundir))
+    
+    logger.info(15*"*")
+    logger.info("        ALL OPERATIONS COMPLETED   ")
+    logger.info(15*"*")
